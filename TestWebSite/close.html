@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Online - Domande Chiuse</title>
+    <style>
+        /* Stili per il corpo della pagina */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Stili per la barra di navigazione */
+        .navbar {
+            background-color: #4CAF50;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+
+        .navbar a:hover {
+            background-color: #45a049;
+            color: white;
+        }
+
+        .navbar a.active {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Stili per la sezione principale del contenuto */
+        .container {
+            background: #fff;
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .question {
+            margin: 20px 0;
+        }
+
+        /* Stili per il bottone */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Stili per il timer */
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            color: #e74c3c;
+        }
+
+        /* Stili per il selettore di domande */
+        .selection-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        select {
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+
+        /* Stili per la risposta corretta */
+        .corretta {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra di navigazione con link alle pagine -->
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="open.html">Domande Aperte</a>
+        <a href="close.html" class="active">Domande Chiuse</a>
+    </div>
+
+    <!-- Contenitore principale per le domande chiuse -->
+    <div class="container">
+        <h1>Domande Chiuse</h1>
+        <!-- Timer che verrà mostrato quando il test inizia -->
+        <div id="timer" style="display:none;">Tempo rimanente: <span id="time">10:00</span></div>
+
+        <!-- Selettore per il numero di domande da fare -->
+        <div class="selection-container">
+            <label for="numDomandeChiuse">Seleziona il numero di domande: </label>
+            <select id="numDomandeChiuse">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button id="startButton" onclick="startTest()">Inizia Test</button>
+        </div>
+
+        <!-- Form per le domande chiuse, inizialmente nascosto -->
+        <form id="closedQuestionsForm" style="display:none;">
+            <div id="questions"></div>
+            <button type="button" onclick="salvaRisposteChiuse()">Invia Risposte</button>
+        </form>
+    </div>
+
+    <script>
+        // Array con le domande chiuse
+        const domandeChiuse = [
+            { domanda: "Quale linguaggio viene utilizzato principalmente per lo sviluppo web lato client?", opzioni: ["Java", "Python", "JavaScript", "C++"], corretta: "JavaScript" },
+            { domanda: "Cosa significa CSS?", opzioni: ["Cascading Style Sheets", "Creative Style Sheets", "Computer Style Sheets", "Coded Style Sheets"], corretta: "Cascading Style Sheets" },
+            { domanda: "Qual è il risultato di 5 + 3?", opzioni: ["5", "8", "10", "12"], corretta: "8" },
+            { domanda: "Qual è il sistema operativo di Apple?", opzioni: ["Windows", "macOS", "Linux", "Android"], corretta: "macOS" },
+            { domanda: "Quale delle seguenti è una funzione di un database?", opzioni: ["Archiviazione dei dati", "Elaborazione di immagini", "Creazione di grafici", "Editing video"], corretta: "Archiviazione dei dati" }
+        ];
+
+        // Elementi DOM
+        const container = document.getElementById('questions');
+        const form = document.getElementById('closedQuestionsForm');
+        const timerElement = document.getElementById('timer');
+        const timeDisplay = document.getElementById('time');
+        const startButton = document.getElementById('startButton');
+        let totalTime = 600; // Tempo totale del test in secondi (10 minuti)
+        let timerInterval;
+
+        // Funzione che inizia il test quando l'utente clicca su "Inizia Test"
+        function startTest() {
+            // Ottieni il numero di domande selezionate
+            const numDomande = document.getElementById('numDomandeChiuse').value;
+            // Genera le domande chiuse
+            generaDomandeChiuse(numDomande);
+            form.style.display = 'block'; // Mostra il form delle domande
+            timerElement.style.display = 'block'; // Mostra il timer
+            startButton.style.display = 'none'; // Nasconde il bottone di inizio
+            document.getElementById('numDomandeChiuse').disabled = true; // Disabilita il selettore
+            timerInterval = setInterval(aggiornaTimer, 1000); // Avvia il timer
+        }
+
+        // Funzione che aggiorna il timer ogni secondo
+        function aggiornaTimer() {
+            const minuti = Math.floor(totalTime / 60);
+            const secondi = totalTime % 60;
+            // Aggiorna il display del timer
+            timeDisplay.textContent = `${minuti}:${secondi < 10 ? '0' : ''}${secondi}`;
+            if (totalTime > 0) {
+                totalTime--;
+            } else {
+                clearInterval(timerInterval); // Ferma il timer
+                alert("Tempo scaduto! Le risposte saranno salvate automaticamente.");
+                salvaRisposteChiuse(); // Salva le risposte quando il tempo è scaduto
+            }
+        }
+
+        // Funzione che genera le domande chiuse in base al numero selezionato
+        function generaDomandeChiuse(numDomande) {
+            container.innerHTML = ""; // Pulisce il contenitore prima di aggiungere le domande
+            for (let i = 0; i < numDomande; i++) {
+                const domanda = domandeChiuse[i];
+                // Crea l'HTML per ogni domanda e le sue opzioni
+                const opzioni = domanda.opzioni.map((opzione, index) => `
+                    <label>
+                        <input type="radio" name="q${i + 1}" value="${opzione}" required>
+                        ${opzione}
+                    </label>
+                    <br>
+                `).join('');
+                container.innerHTML += `
+                    <div class="question">
+                        <p>${i + 1}. ${domanda.domanda}</p>
+                        ${opzioni}
+                    </div>`;
+            }
+        }
+
+        // Funzione che salva le risposte scelte dall'utente
+        function salvaRisposteChiuse() {
+            clearInterval(timerInterval); // Ferma il timer
+            const formData = new FormData(form);
+            let testo = "Risposte delle domande chiuse:\n";
+            for (let [key, value] of formData.entries()) {
+                const domandaIndex = key.replace('q', '') - 1;
+                const rispostaCorretta = domandeChiuse[domandaIndex].corretta;
+                testo += `Domanda ${key.replace('q', '')}: Risposta scelta: ${value} ${value === rispostaCorretta ? "(Corretta)" : "(Sbagliata)"}\n`;
+            }
+            // Crea un file di testo con le risposte
+            const blob = new Blob([testo], { type: "text/plain;charset=utf-8" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "risposte_domande_chiuse.txt";
+            a.click();
+            alert("Risposte inviate e salvate!");
+        }
+    </script>
+</body>
+</html>

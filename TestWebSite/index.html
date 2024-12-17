@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Online - Home</title>
+    <style>
+        /* Stili di base per il corpo della pagina */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Stili per la barra di navigazione */
+        .navbar {
+            background-color: #4CAF50;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+
+        .navbar a:hover {
+            background-color: #45a049;
+            color: white;
+        }
+
+        .navbar a.active {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Stili per il contenitore principale */
+        .container {
+            background: #fff;
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Stili per il titolo della pagina */
+        h1 {
+            color: #333;
+        }
+
+        /* Stili per il bottone */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra di navigazione: link alle diverse sezioni del test -->
+    <div class="navbar">
+        <a href="index.html" class="active">Home</a>
+        <a href="open.html">Domande Aperte</a>
+        <a href="close.html">Domande Chiuse</a>
+    </div>
+
+    <!-- Contenitore principale per la home -->
+    <div class="container">
+        <h1>Benvenuto nel Test Online!</h1>
+        <p>Seleziona il tipo di test e inizia subito.</p>
+        <!-- Bottone che porta alla pagina delle domande aperte -->
+        <a href="open.html"><button>Inizia il Test</button></a>
+    </div>
+</body>
+</html>
